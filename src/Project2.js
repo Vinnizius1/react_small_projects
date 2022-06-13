@@ -8,28 +8,47 @@ export default function Project2() {
 
     // REF
     const idTarefa = useRef(0);
+    const inputRef = useRef();
 
     // METODOS
     function adicionarTarefa() {
-        setListaTarefas(old => { return [...old, {id: idTarefa.current, texto: tarefa}] })
+        // Adicionamos a tarefa
+        setListaTarefas(old => { return [...old, {id: idTarefa.current, texto: tarefa}] });
+        // Adicionamos mais 1 valor ao "id" da tarefa
+        idTarefa.current++;
+        // Limpamos o "texto" da tarefa
+        setTarefa('');
+        // Colocamos novamente o foco no campo do input
+        inputRef.current.focus();
+    }
+
+    function limparTarefa() {
+        setListaTarefas(old => { return [] });
+        idTarefa.current = 0;
+    }
+
+    function removerTarefa(id) {
+        // "tmp" será um array q conterá todas as tarefas COM EXCEÇÃO daquela do "id" passado como argumento
+        const tmp = listaTarefas.filter((tarefa) =>  tarefa.id !== id);
+        setListaTarefas(tmp);
     }
 
     return (
-        <>
+        <div style={{textAlign: "center"}}>
             <h3>GESTOR DE TAREFAS</h3>
             <hr />
-            <input type="text" value={tarefa} onChange={(e) => setTarefa(e.target.value)} />
+            <input ref={inputRef} type="text" value={tarefa} onChange={(e) => setTarefa(e.target.value)} />
             <div>
                 <button onClick={adicionarTarefa}>Adicionar</button>
-                <button>Limpar Tudo</button>
+                <button onClick={limparTarefa}>Limpar Tudo</button>
             </div>
             <hr />
 
             <p>Tarefas:</p>
-            {listaTarefas.map((t) => {
-                return <p key={t.id}>{t.texto}</p>
+            {listaTarefas.map((tarefa) => {
+                return <p key={tarefa.id}>{tarefa.texto} - <span onClick={() => removerTarefa(tarefa.id)}>[remover]</span></p>
             })}
-        </>
+        </div>
     )
 }
 
